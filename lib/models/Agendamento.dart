@@ -3,19 +3,19 @@
 
 class Agendamento{
   String id;
-  DateTime diaSemana;
-  DateTime horario;
+  DateTime diaHorario;
   DateTime tempo;
 
+  Agendamento(this.id, this.diaHorario, this.tempo);
 
-  Agendamento(this.id, this.diaSemana, this.horario, this.tempo);
+  Agendamento.fromJson(Map<String, dynamic> json)
+      : id = json['id'] as String,
+        diaHorario = DateTime(json['diaHorario']),
+        tempo = DateTime(json['tempo']);
 
-  factory Agendamento.fromJson(Map<String, dynamic> json){
-    return Agendamento(
-        id: json['id'],
-        diaSemana: json['diaSemana'],
-        horario: json['horario'],
-        tempo: json['tempo']
-    );
-  }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'diaHorario': diaHorario,
+    'tempo': tempo
+  };
 }

@@ -1,13 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_browser_client.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
+import 'package:tcc/views/ControleIrrigacao.dart';
+import 'package:tcc/views/ListViewAgendamentos.dart';
 
+const String titulo = 'TCC do BECKÃO';
 
 void main () {
-  runApp(MyApp());
+    initializeDateFormatting('pt_br');
+    runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -16,93 +17,52 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const MyHomePage(title:'IrrigaF')
+      theme: ThemeData(useMaterial3: true),
+      debugShowCheckedModeBanner: false,
+      title: titulo,
+      home: ViewNavigation()
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+class ViewNavigation extends StatefulWidget{
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<StatefulWidget> createState() {
+    return _ViewNavigationState();
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  final MqttBrowserClient client = MqttBrowserClient('ws://localhost','teste');
-  double umidade = 0;
-  bool bombaStatus = false;
-  Future<bool> conexaoMQTT() async{
-    if(client.connectionStatus!.state == MqttConnectionState.connected){
-      return true;
-    }
-
-    client.port = 8080;
-    
-    client.onConnected = () =>{
-      print("Conectado")
-    };
-
-    try{
-      await client.connect();
-      client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
-        final recMessage = c![0].payload as MqttPublishMessage;
-        final payload = MqttPublishPayload.bytesToStringAsString(recMessage.payload.message);
-        print('Received message:$payload from topic: ${c[0].topic}');
-        setState(() {
-          umidade = double.parse(payload);
-        });
-      });
-      await client.subscribe("/umidade", MqttQos.atMostOnce);
-      return true;
-    }on Exception catch(e){
-      print(e);
-      return false;
-    }
-  }
-
+class _ViewNavigationState extends State<ViewNavigation>{
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children:[
-              Text("${umidade} %"),
-              FutureBuilder<bool>(
-                  future: conexaoMQTT(),
-                  builder: (context, snapshot){
-                    if(snapshot.hasData){
-                      if (snapshot.data == true) {
-                        return Text("Conectado.");
-                      }else{
-                        return Text("Não Conectado.");
-                      }
-                    }else{
-                      return CircularProgressIndicator();
-                    }
-                  }
+    return DefaultTabController(
+        initialIndex: 0,
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(titulo),
+            bottom: const TabBar(
+              tabs: <Widget>[
+                Tab(
+                  icon: Icon(Icons.percent),
+                  text: "Controle Irrigação",
+                ),
+                Tab(
+                  icon: Icon(Icons.schedule),
+                  text: "Angendamentos",
                 )
+              ]
+            )
+          ),
+          body: TabBarView(
+            children: <Widget>[
+              ControleIrrigacao(),
+              ListViewAgendamentos()
             ]
-        )
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          final builder = MqttClientPayloadBuilder();
-          if(bombaStatus == true){
-            builder.addString("0");
-          }else{
-            builder.addString("1");
-          }
-          bombaStatus = !bombaStatus;
-          client.publishMessage("/comando", MqttQos.atLeastOnce, builder.payload!);
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+          )
+      )
     );
   }
 }
+
+
