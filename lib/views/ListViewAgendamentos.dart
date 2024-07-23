@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tcc/models/Agendamento.dart';
 import 'package:tcc/services/agendamentoService.dart';
 import 'package:tcc/views/FormAgendamento.dart';
-import '../models/Agendamento.dart';
 
 class ListViewAgendamentos extends StatefulWidget{
   const ListViewAgendamentos({super.key});
@@ -15,7 +15,7 @@ class ListViewAgendamentos extends StatefulWidget{
 
 class _ListViewAgendamentosState extends State<ListViewAgendamentos>{
   // Armazena todos os agendamentos
-  List<Agendamento> agendamentos = [Agendamento("", DateTime.now(), DateTime.now())];
+  List<Agendamento> agendamentos = [Agendamento("", 1, DateTime.now(), DateTime.now())];
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +50,11 @@ class _ListViewAgendamentosState extends State<ListViewAgendamentos>{
   // Constrói cada item do ListView
   Widget itemBuilder(BuildContext context, int index){
     Agendamento agendamento = agendamentos[index];
-    String diaDaSemana = DateFormat('EEEE').format(agendamento.diaHorario);
-    String horario = DateFormat('hh:mm').format(agendamento.diaHorario);
+    String diaDaSemana = agendamento.dia.toString();
+    String horario = DateFormat('hh:mm').format(agendamento.horario);
     String tempo = DateFormat('hh:mm').format(agendamento.tempo);
     return ListTile(
-      leading: CircleAvatar(child: Text(diaDaSemana[0])),
+      leading: CircleAvatar(child: Text(diaDaSemana)),
       title: Text(diaDaSemana),
       subtitle: Text("Horário: ${horario} - Tempo: ${tempo}"),
     );
@@ -63,7 +63,7 @@ class _ListViewAgendamentosState extends State<ListViewAgendamentos>{
   void acaoBotaoAddAgendamento(){
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => FormAgendamento(Agendamento("0",DateTime.now(), DateTime.now()))),
+      MaterialPageRoute(builder: (context) => FormAgendamento(Agendamento("0",1, DateTime.now(), DateTime.now()) as Agendamento))
     );
   }
 }

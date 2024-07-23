@@ -3,10 +3,10 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import '../models/Agendamento.dart';
 
-const URL = '';
+const URL = 'localhost:8080';
 
 Future<Agendamento> buscarAgendamentoPorId(int id) async{
-  final response = await http.get(Uri.https(URL, 'ws/agendamento/$id'));
+  final response = await http.get(Uri.http(URL, '/services/agendamento/$id'));
   if(response.statusCode == 200){
     final utf8Json = utf8.decode(response.bodyBytes);
     Map<String, dynamic> mapAgendamento = jsonDecode(utf8Json);
@@ -18,7 +18,7 @@ Future<Agendamento> buscarAgendamentoPorId(int id) async{
 }
 
 Future<List<Agendamento>> listarAgendamentos() async{
-  final response = await http.get(Uri.https(URL, 'ws/agendamento'));
+  final response = await http.get(Uri.http(URL, '/services/agendamento'));
   if(response.statusCode == 200){
     final utf8Json = utf8.decode(response.bodyBytes);
     return compute(parseAgendamentos, utf8Json);
@@ -35,7 +35,7 @@ List<Agendamento> parseAgendamentos(String responseBody){
 }
 
 Future<void> salvarAgendamento(Agendamento) async{
-  final response = await http.post(Uri.https(URL, 'ws/agendamento'),
+  final response = await http.post(Uri.http(URL, '/services/agendamento'),
       headers: <String,String>{
         'Content-Type':'application/json'
       },
