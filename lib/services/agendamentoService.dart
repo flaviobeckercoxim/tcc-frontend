@@ -29,9 +29,14 @@ Future<List<Agendamento>> listarAgendamentos() async{
 
 List<Agendamento> parseAgendamentos(String responseBody){
   final mapAgendamentos = jsonDecode(responseBody);
-  return mapAgendamentos.map<Agendamento>((mapJson){
-    return Agendamento.fromJson(mapJson);
-  }).toList();
+  try {
+    return mapAgendamentos.map<Agendamento>((mapJson) {
+      return Agendamento.fromJson(mapJson);
+    }).toList();
+  }catch(e){
+    print(e);
+    return [];
+  }
 }
 
 Future<void> salvarAgendamento(Agendamento) async{

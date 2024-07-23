@@ -64,14 +64,15 @@ class _FormAgendamentoState extends State{
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
         onPressed: () async{
-          agendamento.dia = diaSelecionado;
-          DateTime horario = DateTime.parse('2024-07-12 ${horarioController.text}:00.000');
-          DateTime tempo = DateTime.parse('2024-07-12 00:${tempoController.text}:00.000');
-          print(horario);
-          print(tempo);
-          agendamento.horario = horario;
-          agendamento.tempo = tempo;
           try{
+            agendamento.dia = diaSelecionado;
+            int hora = int.parse(horarioController.text.split(":")[0]);
+            int minutos = int.parse(horarioController.text.split(":")[1]);
+            DateTime now = DateTime.now();
+            DateTime horario = new DateTime(now.year,now.month,now.day,hora,minutos,0,0,0).toUtc();
+            agendamento.horario = horario;
+            agendamento.tempo = int.parse(tempoController.text);
+
             await salvarAgendamento(agendamento);
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text("Agendamento salvo."),
