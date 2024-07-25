@@ -39,15 +39,34 @@ List<Agendamento> parseAgendamentos(String responseBody){
   }
 }
 
-Future<void> salvarAgendamento(Agendamento) async{
+Future<void> salvarAgendamento(Agendamento agendamento) async{
   final response = await http.post(Uri.http(URL, '/services/agendamento'),
       headers: <String,String>{
         'Content-Type':'application/json'
       },
-      body: jsonEncode(Agendamento.toJson())
+      body: jsonEncode(agendamento.toJson())
   );
 
   if (response.statusCode != 200){
+    throw Exception(response.body);
+  }
+}
+
+Future<void> atualizarAgendamento(Agendamento agendamento) async{
+  final response = await http.put(Uri.http(URL, '/services/agendamento'),
+      headers: <String,String>{
+        'Content-Type':'application/json'
+      },
+      body: jsonEncode(agendamento.toJson())
+  );
+  if (response.statusCode != 200){
+    throw Exception(response.body);
+  }
+}
+
+Future<void> removerAgendamento(String id) async{
+  final response = await http.delete(Uri.http(URL, '/services/agendamento/$id'));
+  if(response.statusCode != 200){
     throw Exception(response.body);
   }
 }

@@ -9,7 +9,7 @@ class Agendamento{
   Agendamento.fromJson(Map<String, dynamic> json)
       : id = json['_id'] as String,
         dia = json['dia'] as int,
-        horario = DateTime.parse(json['horario']),
+        horario = DateTime.parse(json['horario']).toLocal(),
         tempo = json['tempo'] as int;
 
   Map<String, dynamic> toJson() => {

@@ -1,6 +1,7 @@
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:tcc/services/agendamentoService.dart';
 
 import '../models/Agendamento.dart';
@@ -16,6 +17,8 @@ class FormAgendamento extends StatefulWidget{
 }
 
 class _FormAgendamentoState extends State{
+  final _formKey = GlobalKey<FormState>();
+  Agendamento agendamento;
   TextEditingController horarioController = TextEditingController();
   TextEditingController tempoController = TextEditingController();
   int diaSelecionado = 1;
@@ -51,10 +54,15 @@ class _FormAgendamentoState extends State{
     )
   ];
 
-  final _formKey = GlobalKey<FormState>();
-
-  Agendamento agendamento;
   _FormAgendamentoState(this.agendamento);
+
+  @override
+  void initState() {
+    super.initState();
+    this.diaSelecionado = agendamento.dia;
+    this.horarioController.text = DateFormat("HH:mm").format(agendamento.horario);
+    this.tempoController.text = agendamento.tempo.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,11 +77,17 @@ class _FormAgendamentoState extends State{
             int hora = int.parse(horarioController.text.split(":")[0]);
             int minutos = int.parse(horarioController.text.split(":")[1]);
             DateTime now = DateTime.now();
-            DateTime horario = new DateTime(now.year,now.month,now.day,hora,minutos,0,0,0).toUtc();
+            DateTime horario = new DateTime(now.year, now.month, now.day, hora, minutos, 0, 0, 0).toUtc().toLocal();
+            print(horario);
             agendamento.horario = horario;
             agendamento.tempo = int.parse(tempoController.text);
 
-            await salvarAgendamento(agendamento);
+            if(agendamento.id.compareTo("0") == 0) {
+              await salvarAgendamento(agendamento);
+            }else{
+              await atualizarAgendamento(agendamento);
+            }
+
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text("Agendamento salvo."),
                     behavior: SnackBarBehavior.floating)

@@ -51,15 +51,15 @@ class _ListViewAgendamentosState extends State<ListViewAgendamentos>{
   Widget itemBuilder(BuildContext context, int index){
     Agendamento agendamento = agendamentos[index];
     String diaDaSemana = getDiaSemana(agendamento.dia);
-    String horario = DateFormat('hh:mm').format(agendamento.horario);
+    String horario = DateFormat('HH:mm').format(agendamento.horario);
     String tempo = agendamento.tempo.toString();
     return ListTile(
       leading: CircleAvatar(child: Text('${diaDaSemana[0]}${diaDaSemana[1]}${diaDaSemana[2]}')),
       title: Text(diaDaSemana),
       subtitle: Text("Horário: ${horario} - Tempo: ${tempo} min."),
       trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-        IconButton(onPressed: ()=>{}, icon: Icon(Icons.edit)),
-        IconButton(onPressed: ()=>{}, icon: Icon(Icons.delete)),
+        IconButton(onPressed: ()=>{acaoBotaoEditarAgendamento(agendamento)}, icon: Icon(Icons.edit)),
+        IconButton(onPressed: ()=>{acaoBotaoRemover(context, agendamento.id)}, icon: Icon(Icons.delete)),
       ]),
     );
   }
@@ -67,11 +67,62 @@ class _ListViewAgendamentosState extends State<ListViewAgendamentos>{
   void acaoBotaoAddAgendamento() async{
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => FormAgendamento(Agendamento("0",1, DateTime.now(), 10) as Agendamento))
+      MaterialPageRoute(builder: (context) => FormAgendamento(Agendamento("0", 1, DateTime.now(), 10) as Agendamento))
     );
     setState(() {
 
     });
+  }
+
+  void acaoBotaoEditarAgendamento(Agendamento agendamento) async{
+    await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => FormAgendamento(agendamento))
+    );
+    setState(() {
+
+    });
+  }
+
+  void acaoBotaoRemover(BuildContext context, String id) {
+    Widget cancelButton = TextButton(
+      child: Text("Não"),
+      onPressed:  () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text("Sim"),
+      onPressed:  () async {
+        try {
+          removerAgendamento(id);
+          setState(() {
+
+          });
+          Navigator.of(context).pop();
+        }catch(e){
+          print(e);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Problema ao remover"),
+          ));
+          Navigator.of(context).pop();
+        }
+      },
+    );
+    AlertDialog alert = AlertDialog(
+      title: Text("Atenção"),
+      content: Text("Gostaria mesmo de remover o agendamento?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   String getDiaSemana(int dia){
