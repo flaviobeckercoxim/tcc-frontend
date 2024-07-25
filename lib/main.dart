@@ -4,7 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:tcc/views/ControleIrrigacao.dart';
 import 'package:tcc/views/ListViewAgendamentos.dart';
 
-const String titulo = 'TCC do BECKÃO';
+const String titulo = 'TCC do BECKER';
 
 void main () {
     initializeDateFormatting('pt_br');

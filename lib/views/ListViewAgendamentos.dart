@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tcc/models/Agendamento.dart';
 import 'package:tcc/services/agendamentoService.dart';
 import 'package:tcc/views/FormAgendamento.dart';
-import '../models/Agendamento.dart';
 
 class ListViewAgendamentos extends StatefulWidget{
   const ListViewAgendamentos({super.key});
@@ -15,7 +15,7 @@ class ListViewAgendamentos extends StatefulWidget{
 
 class _ListViewAgendamentosState extends State<ListViewAgendamentos>{
   // Armazena todos os agendamentos
-  List<Agendamento> agendamentos = [Agendamento("", DateTime.now(), DateTime.now())];
+  List<Agendamento> agendamentos = [];
 
   @override
   Widget build(BuildContext context) {
@@ -50,20 +50,48 @@ class _ListViewAgendamentosState extends State<ListViewAgendamentos>{
   // Constrói cada item do ListView
   Widget itemBuilder(BuildContext context, int index){
     Agendamento agendamento = agendamentos[index];
-    String diaDaSemana = DateFormat('EEEE').format(agendamento.diaHorario);
-    String horario = DateFormat('hh:mm').format(agendamento.diaHorario);
-    String tempo = DateFormat('hh:mm').format(agendamento.tempo);
+    String diaDaSemana = getDiaSemana(agendamento.dia);
+    String horario = DateFormat('hh:mm').format(agendamento.horario);
+    String tempo = agendamento.tempo.toString();
     return ListTile(
-      leading: CircleAvatar(child: Text(diaDaSemana[0])),
+      leading: CircleAvatar(child: Text('${diaDaSemana[0]}${diaDaSemana[1]}${diaDaSemana[2]}')),
       title: Text(diaDaSemana),
-      subtitle: Text("Horário: ${horario} - Tempo: ${tempo}"),
+      subtitle: Text("Horário: ${horario} - Tempo: ${tempo} min."),
+      trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+        IconButton(onPressed: ()=>{}, icon: Icon(Icons.edit)),
+        IconButton(onPressed: ()=>{}, icon: Icon(Icons.delete)),
+      ]),
     );
   }
 
-  void acaoBotaoAddAgendamento(){
-    Navigator.push(
+  void acaoBotaoAddAgendamento() async{
+    await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => FormAgendamento(Agendamento("0",DateTime.now(), DateTime.now()))),
+      MaterialPageRoute(builder: (context) => FormAgendamento(Agendamento("0",1, DateTime.now(), 10) as Agendamento))
     );
+    setState(() {
+
+    });
+  }
+
+  String getDiaSemana(int dia){
+    switch(dia){
+      case 1:
+        return "Segunda-Feira";
+      case 2:
+        return "Terça-Feira";
+      case 3:
+        return "Quarta-Feira";
+      case 4:
+        return "Quinta-Feira";
+      case 5:
+        return "Sexta-Feira";
+      case 6:
+        return "Sábado";
+      case 7:
+        return "Domingo";
+      default:
+        return "";
+    }
   }
 }

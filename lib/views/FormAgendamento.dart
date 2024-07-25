@@ -1,6 +1,7 @@
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tcc/services/agendamentoService.dart';
 
 import '../models/Agendamento.dart';
 
@@ -62,8 +63,29 @@ class _FormAgendamentoState extends State{
       body: _buildForm(),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
-        onPressed: (){
-          Navigator.pop(context);
+        onPressed: () async{
+          try{
+            agendamento.dia = diaSelecionado;
+            int hora = int.parse(horarioController.text.split(":")[0]);
+            int minutos = int.parse(horarioController.text.split(":")[1]);
+            DateTime now = DateTime.now();
+            DateTime horario = new DateTime(now.year,now.month,now.day,hora,minutos,0,0,0).toUtc();
+            agendamento.horario = horario;
+            agendamento.tempo = int.parse(tempoController.text);
+
+            await salvarAgendamento(agendamento);
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Agendamento salvo."),
+                    behavior: SnackBarBehavior.floating)
+            );
+            Navigator.pop(context);
+          }catch(e){
+            print(e);
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(e.toString()),
+                    behavior: SnackBarBehavior.floating)
+            );
+          }
         }
       ),
     );
@@ -93,13 +115,13 @@ class _FormAgendamentoState extends State{
               Padding(
                 padding: EdgeInsets.all(10.0),
                 child: DateTimePicker(
+                  controller: horarioController,
                   type: DateTimePickerType.time,
                   decoration: InputDecoration(
                       labelText: 'Horário',
                       prefixIcon: Icon(Icons.access_time)
                   ),
                   use24HourFormat: true,
-                  initialValue: '',
                   firstDate: DateTime(2000),
                   lastDate: DateTime(2100),
                   onChanged: (val) => print(val),
