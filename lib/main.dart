@@ -64,5 +64,3 @@ class _ViewNavigationState extends State<ViewNavigation>{
     );
   }
 }
-
-
