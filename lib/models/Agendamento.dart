@@ -15,7 +15,7 @@ class Agendamento{
   Map<String, dynamic> toJson() => {
     'id': id,
     'dia': dia,
-    'horario': horario.toString(),
+    'horario': horario.toUtc().toString(),
     'tempo': tempo
   };
 }

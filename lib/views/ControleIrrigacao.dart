@@ -9,7 +9,7 @@ class ControleIrrigacao extends StatefulWidget{
 }
 
 class _ControleIrrigacaoState extends State<ControleIrrigacao> {
-  final MqttBrowserClient client = MqttBrowserClient('ws://localhost','teste');
+  final MqttBrowserClient client = MqttBrowserClient('ws://vps51445.publiccloud.com.br','teste');
 
   double umidade = 0;
   bool bombaStatus = false;
