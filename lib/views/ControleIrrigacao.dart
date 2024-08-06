@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mqtt_client/mqtt_browser_client.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:mqtt_client/mqtt_client.dart';
+import 'package:mqtt_client/mqtt_browser_client.dart';
+import 'package:mqtt_client/mqtt_server_client.dart';
+import 'dart:math';
 
 class ControleIrrigacao extends StatefulWidget{
   @override
@@ -9,7 +12,10 @@ class ControleIrrigacao extends StatefulWidget{
 }
 
 class _ControleIrrigacaoState extends State<ControleIrrigacao> {
-  final MqttBrowserClient client = MqttBrowserClient('ws://vps51445.publiccloud.com.br','teste');
+
+  final client = (kIsWeb?
+                    MqttBrowserClient('ws://vps51445.publiccloud.com.br', Random().toString()):
+                    MqttServerClient('ws://vps51445.publiccloud.com.br', Random().toString()));
 
   double umidade = 0;
   bool bombaStatus = false;
@@ -18,6 +24,12 @@ class _ControleIrrigacaoState extends State<ControleIrrigacao> {
     if(client.connectionStatus!.state == MqttConnectionState.connected){
       return true;
     }
+
+    if(client is MqttServerClient) {
+      MqttServerClient sClient = client as MqttServerClient;
+      sClient.useWebSocket = true;
+    }
+
     client.port = 8080;
     client.onConnected = () =>{
       print("Conectado")
