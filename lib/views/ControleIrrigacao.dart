@@ -30,7 +30,7 @@ class _ControleIrrigacaoState extends State<ControleIrrigacao> {
       sClient.useWebSocket = true;
     }
 
-    client.port = 8080;
+    client.port = 3000;
     client.onConnected = () =>{
       print("Conectado")
     };
@@ -78,7 +78,21 @@ class _ControleIrrigacaoState extends State<ControleIrrigacao> {
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children:[
-          Text("${umidade} %")
+          Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text("${(100 * (4095 - umidade)/4095).toStringAsFixed(0) }",
+                    style: TextStyle(
+                        fontSize: 50,
+                        fontWeight: FontWeight.bold
+                    )),
+                Text(" %",style: TextStyle(
+                    fontSize: 20
+                ))
+          ]),
+          Text("Umidade")
         ]
     );
   }

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import '../models/Agendamento.dart';
 
-const URL = 'vps51445.publiccloud.com.br:8080';
+const URL = 'vps51445.publiccloud.com.br:3000';
 
 Future<Agendamento> buscarAgendamentoPorId(int id) async{
   final response = await http.get(Uri.http(URL, '/services/agendamento/$id'));
